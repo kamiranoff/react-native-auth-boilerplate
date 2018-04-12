@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text, Button } from 'react-native';
 
 import colors from '../constants/colors';
 import AuthButtons from './AuthButtons';
@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
   mainButtonText: {
     color: colors.beach5,
     fontSize: 16,
+  },
+  forgotPasswordContainer: {
+    marginTop: 15,
   },
 });
 
@@ -49,11 +52,16 @@ class Auth extends Component {
     this.setState({ confirmPassword });
   };
 
-  handleSubmitForm = () => {
-    console.log(this.state);
+  handleSignIn = () => {
+    console.log('handleSignIn', this.state);
+  };
+
+  handleSignUp = () => {
+    console.log('handleSignUp', this.state);
   };
 
   render() {
+    const isSignUp = this.state.activeForm === SIGN_UP;
     return (
       <View>
         <View>
@@ -67,13 +75,22 @@ class Auth extends Component {
             onEmailChange={this.handleEmailChange}
             onPasswordChange={this.handlePasswordChange}
             onConfirmPasswordChange={this.handleConfirmPasswordChange}
-            signup={this.state.activeForm === SIGN_UP}
+            signup={isSignUp}
           />
           <TouchableOpacity
             style={styles.mainButton}
-            onPress={this.handleSubmitForm}>
-            <Text style={styles.mainButtonText}>Sign In</Text>
+            onPress={isSignUp ? this.handleSignUp : this.handleSignIn}>
+            <Text style={styles.mainButtonText}>{isSignUp ? 'Sign up' : 'Sign in'}</Text>
           </TouchableOpacity>
+
+          <View style={styles.forgotPasswordContainer}>
+            <Button
+              title="forgot passowrd ?"
+              onPress={() => console.log('not implemented')}
+              color={colors.beach1}
+            />
+          </View>
+
         </View>
       </View>
     );
