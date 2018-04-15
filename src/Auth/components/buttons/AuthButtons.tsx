@@ -1,7 +1,7 @@
 import React from 'react';
-import colors from '../constants/colors';
+import colors from '../../../constants/colors';
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { SIGN_IN, SIGN_UP, TAuthForm } from './index';
+import { SIGN_IN, SIGN_UP, TAuthForm } from '../../index';
 
 export interface IAuthButtons {
   handlePress: (buttonType: TAuthForm) => void;

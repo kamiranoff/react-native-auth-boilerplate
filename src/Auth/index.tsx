@@ -2,28 +2,13 @@ import React, { Component } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Button } from 'react-native';
 
 import colors from '../constants/colors';
-import AuthButtons from './AuthButtons';
-import AuthFormView from './AuthFormView';
+import AuthButtons from './components/buttons/AuthButtons';
+import Form from './Form';
+import SubmitButton from './components/buttons/SubmitButton';
+import ForgotPasswordButton from './components/buttons/ForgotPasswordButton';
+import ErrorMessage from './components/texts/ErrorMessage';
 
 export type TAuthForm = 'signin' | 'signup';
-
-const styles = StyleSheet.create({
-  mainButton: {
-    backgroundColor: colors.beach2,
-    borderBottomLeftRadius: 6,
-    borderBottomRightRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-  },
-  mainButtonText: {
-    color: colors.beach5,
-    fontSize: 16,
-  },
-  forgotPasswordContainer: {
-    marginTop: 15,
-  },
-});
 
 export const SIGN_IN = 'signin';
 export const SIGN_UP = 'signup';
@@ -34,22 +19,11 @@ class Auth extends Component {
     password: '',
     confirmPassword: '',
     activeForm: 'signin' as TAuthForm,
-  };
-
-  handleEmailChange = (email) => {
-    this.setState({ email });
-  };
-
-  handlePasswordChange = (password) => {
-    this.setState({ password });
+    error: '',
   };
 
   handleFormSelection = (form: TAuthForm) => {
     this.setState({ activeForm: form });
-  };
-
-  handleConfirmPasswordChange = (confirmPassword) => {
-    this.setState({ confirmPassword });
   };
 
   handleSignIn = () => {
@@ -60,38 +34,26 @@ class Auth extends Component {
     console.log('handleSignUp', this.state);
   };
 
+  handleForgotPassword = () => {
+    console.log('not yet implemented');
+  };
+
   render() {
-    const isSignUp = this.state.activeForm === SIGN_UP;
+    const isSignupForm = this.state.activeForm === SIGN_UP;
     return (
       <View>
-        <View>
-          <AuthButtons
-            handlePress={this.handleFormSelection}
-            activeForm={this.state.activeForm}
-          />
-          <AuthFormView
-            email={this.state.email}
-            password={this.state.password}
-            onEmailChange={this.handleEmailChange}
-            onPasswordChange={this.handlePasswordChange}
-            onConfirmPasswordChange={this.handleConfirmPasswordChange}
-            signup={isSignUp}
-          />
-          <TouchableOpacity
-            style={styles.mainButton}
-            onPress={isSignUp ? this.handleSignUp : this.handleSignIn}>
-            <Text style={styles.mainButtonText}>{isSignUp ? 'Sign up' : 'Sign in'}</Text>
-          </TouchableOpacity>
-
-          <View style={styles.forgotPasswordContainer}>
-            <Button
-              title="forgot passowrd ?"
-              onPress={() => console.log('not implemented')}
-              color={colors.beach1}
-            />
-          </View>
-
-        </View>
+        <AuthButtons
+          handlePress={this.handleFormSelection}
+          activeForm={this.state.activeForm}
+        />
+        <Form isSignupForm={isSignupForm} />
+        <SubmitButton
+          isSignupForm={isSignupForm}
+        />
+        <ErrorMessage error={this.state.error} />
+        <ForgotPasswordButton
+          onPress={this.handleForgotPassword}
+        />
       </View>
     );
   }
