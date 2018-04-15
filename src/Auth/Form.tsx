@@ -3,20 +3,21 @@ import { View } from 'react-native';
 import EmailInput from './components/inputs/EmailInput';
 import PasswordInput from './components/inputs/PasswordInput';
 import ConfirmPasswordInput from './components/inputs/ConfirmPasswordInput';
+import SubmitButton from './components/buttons/SubmitButton';
+import { isValidEmail, validatePassword, areValuesIdentical } from './validators';
 
 export interface IForm {
   isSignupForm?: boolean;
+  handleSubmit: (email: string, password: string) => void;
 }
 
 export interface IFormState {
   email: string;
   password: string;
   confirmPassword: string;
-  error: {
-    email: string;
-    password: string[],
-    confirmPassword: string,
-  };
+  emailError: string;
+  passwordError: string[];
+  confirmPasswordError: string;
 }
 
 class Form extends Component<IForm, IFormState> {
@@ -29,97 +30,130 @@ class Form extends Component<IForm, IFormState> {
     email: '',
     password: '',
     confirmPassword: '',
-    error: {
-      email: '',
-      password: [],
-      confirmPassword: '',
-    },
+    emailError: '',
+    passwordError: [],
+    confirmPasswordError: '',
+    errorVisible: false,
   };
 
-  validateEmail = (email: string) => {
-    // tslint:disable-next-line:max-line-length
-    const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return reg.test(email);
+  isNotFilled = () => {
+    const { isSignupForm } = this.props;
+    const { email, password, confirmPassword } = this.state;
+    const isSignUpNotFilled = isSignupForm && (!email || !password || !confirmPassword);
+
+    if (isSignUpNotFilled) {
+      return true;
+    } else if (!email || !password) {
+      return true;
+    }
+    return false;
   };
 
-  validatePassword = (password: string) => {
-    let errors: string[] = [];
+  isInError = () => {
+    const { isSignupForm } = this.props;
+    const { emailError, passwordError, confirmPasswordError } = this.state;
+    const isSignupInError = isSignupForm && (emailError || passwordError.length > 0 || confirmPasswordError);
 
-    if (password.length < 8) {
-      errors.push('Your password must be at least 8 characters');
+    if (isSignupInError) {
+      return true;
+    } else if (emailError || passwordError.length > 0) {
+      return true;
     }
-    if (password.search(/[a-z]/i) < 0) {
-      errors.push('Your password must contain at least one letter.');
-    }
-    if (password.search(/[0-9]/) < 0) {
-      errors.push('Your password must contain at least one digit.');
-    }
+    return false;
+  };
 
-    return errors;
+  validateEmail = () => {
+    if (!isValidEmail(this.state.email.toLowerCase())) {
+      return this.setState({ emailError: 'Invalid email format' });
+    }
+  };
+
+  validatePassword = () => {
+    const passwordError = validatePassword(this.state.password);
+    const isValidPassword = passwordError.length === 0;
+    if (!isValidPassword) {
+      return this.setState({ passwordError });
+    }
+  };
+
+  validateConfirmPassword = () => {
+    const { password, confirmPassword } = this.state;
+    if (!areValuesIdentical(password, confirmPassword)) {
+      return this.setState({ confirmPasswordError: 'Passwords don\'t match' });
+    }
+  };
+
+  validateForm = () => {
+    this.validateEmail();
+    this.validatePassword();
+    if (this.props.isSignupForm) {
+      this.validateConfirmPassword();
+    }
   };
 
   handleEmailChange = (email) => {
-    this.setState({ email, error: { ...this.state.error, email: '' } });
-  };
-
-  handleEmailBlur = () => {
-    const isValidEmail = this.validateEmail(this.state.email.toLowerCase());
-    if (!isValidEmail) {
-      return this.setState({ error: { ...this.state.error, email: 'Invalid email format' } });
-    }
+    this.setState({ email, emailError: '' });
   };
 
   handlePasswordChange = (password) => {
-    this.setState({ password, error: { ...this.state.error, password: [] } });
-  };
-
-  handlePasswordBlur = () => {
-    const errors = this.validatePassword(this.state.password);
-
-    if (errors) {
-      this.setState({ error: { ...this.state.error, password: errors } });
-    }
-  };
-
-  handleConfirmPasswordBlur = () => {
-    if (this.state.password !== this.state.confirmPassword) {
-      this.setState({ error: { ...this.state.error, confirmPassword: 'Passwords don\'t match' } });
-    }
+    this.setState({ password, passwordError: [] });
   };
 
   handleConfirmPasswordChange = (confirmPassword) => {
-    this.setState({ confirmPassword, error: { ...this.state.error, confirmPassword: '' } });
+    this.setState({ confirmPassword, confirmPasswordError: '' });
+  };
+
+  isSubmitButtonDisabled = () => {
+    return !!(this.isInError() || this.isNotFilled());
+  };
+
+  handleSubmit = () => {
+    const { email, password, confirmPassword } = this.state;
+    const passwordError = validatePassword(password);
+    let confirmPasswordError = false;
+    if (this.props.isSignupForm) {
+      confirmPasswordError = !areValuesIdentical(password, confirmPassword);
+    }
+    if (isValidEmail(email) && passwordError.length === 0 && !confirmPasswordError) {
+      this.props.handleSubmit(email, password);
+    } else {
+      this.validateForm();
+    }
   };
 
   render() {
     const { isSignupForm } = this.props;
-    const { email, password, confirmPassword, error } = this.state;
-    console.log(error);
+    const { email, password, confirmPassword, emailError, confirmPasswordError, passwordError } = this.state;
     return (
       <View>
         <EmailInput
           value={email}
           onChangeText={this.handleEmailChange}
-          onBlur={this.handleEmailBlur}
-          errorMessages={error.email}
+          onBlur={this.validateEmail}
+          errorMessages={emailError}
         />
         <PasswordInput
           onChangeText={this.handlePasswordChange}
           isSignupForm={isSignupForm}
           value={password}
-          onBlur={this.handlePasswordBlur}
-          errorMessages={error.password}
+          onBlur={this.validatePassword}
+          errorMessages={passwordError}
           secureTextEntry
         />
         {isSignupForm &&
         <ConfirmPasswordInput
-          onBlur={this.handleConfirmPasswordBlur}
+          onBlur={this.validateConfirmPassword}
           onChangeText={this.handleConfirmPasswordChange}
           value={confirmPassword}
-          errorMessages={error.confirmPassword}
+          errorMessages={confirmPasswordError}
           secureTextEntry
         />
         }
+        <SubmitButton
+          disabled={this.isSubmitButtonDisabled()}
+          isSignupForm={isSignupForm}
+          onPress={this.handleSubmit}
+        />
       </View>
     );
   }

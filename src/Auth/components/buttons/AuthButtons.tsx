@@ -5,7 +5,7 @@ import { SIGN_IN, SIGN_UP, TAuthForm } from '../../index';
 
 export interface IAuthButtons {
   handlePress: (buttonType: TAuthForm) => void;
-  activeForm: TAuthForm;
+  isSignupForm: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -32,16 +32,16 @@ const styles = StyleSheet.create({
   },
 });
 
-const AuthButtons = ({ handlePress, activeForm }: IAuthButtons) => (
+const AuthButtons = ({ handlePress, isSignupForm }: IAuthButtons) => (
   <View style={styles.container}>
     <TouchableWithoutFeedback
       onPress={() => handlePress(SIGN_IN)}
     >
       <View
-        style={[styles.menuBtn, activeForm === SIGN_IN ? styles.activeMenuBtn : null]}
+        style={[styles.menuBtn, !isSignupForm ? styles.activeMenuBtn : null]}
       >
         <Text
-          style={[styles.text, activeForm === SIGN_IN ? styles.activeText : null]}
+          style={[styles.text, !isSignupForm ? styles.activeText : null]}
         >
           SIGN IN
         </Text>
@@ -51,10 +51,10 @@ const AuthButtons = ({ handlePress, activeForm }: IAuthButtons) => (
       onPress={() => handlePress(SIGN_UP)}
     >
       <View
-        style={[styles.menuBtn, activeForm === SIGN_UP ? styles.activeMenuBtn : null]}
+        style={[styles.menuBtn, isSignupForm ? styles.activeMenuBtn : null]}
       >
         <Text
-          style={[styles.text, activeForm === SIGN_UP ? styles.activeText : null]}
+          style={[styles.text, isSignupForm  ? styles.activeText : null]}
         >
           SIGN UP
         </Text>

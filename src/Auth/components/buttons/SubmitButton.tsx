@@ -5,6 +5,7 @@ import colors from '../../../constants/colors';
 export interface ISubmitButton {
   isSignupForm?: boolean;
   onPress: () => void;
+  disabled?: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -20,12 +21,17 @@ const styles = StyleSheet.create({
     color: colors.beach5,
     fontSize: 16,
   },
+  disabled: {
+    opacity: 0.5,
+  },
 });
 
-const SubmitButton: StatelessComponent<ISubmitButton> = ({ isSignupForm, onPress }) => (
+const SubmitButton: StatelessComponent<ISubmitButton> = ({ isSignupForm, onPress, disabled }) => (
   <TouchableOpacity
-    style={styles.mainButton}
-    onPress={onPress}>
+    style={[styles.mainButton, disabled && styles.disabled]}
+    onPress={onPress}
+    disabled={disabled}
+  >
     <Text
       style={styles.mainButtonText}>{isSignupForm ? 'Sign up' : 'Sign in'}</Text>
   </TouchableOpacity>
@@ -33,6 +39,7 @@ const SubmitButton: StatelessComponent<ISubmitButton> = ({ isSignupForm, onPress
 
 SubmitButton.defaultProps = {
   isSignupForm: false,
+  disabled: true,
 };
 
 export default SubmitButton;

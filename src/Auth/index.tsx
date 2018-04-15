@@ -3,16 +3,20 @@ import { View } from 'react-native';
 
 import AuthButtons from './components/buttons/AuthButtons';
 import Form from './Form';
-import SubmitButton from './components/buttons/SubmitButton';
 import ForgotPasswordButton from './components/buttons/ForgotPasswordButton';
 import ErrorMessage from './components/texts/ErrorMessage';
 
 export type TAuthForm = 'signin' | 'signup';
 
-export const SIGN_IN = 'signin';
+export const SIGN_IN = 'signup';
 export const SIGN_UP = 'signup';
 
-class Auth extends Component {
+export interface IAuthState {
+  activeForm: TAuthForm;
+  error: string;
+}
+
+class Auth extends Component<{}, IAuthState> {
   state = {
     activeForm: 'signin' as TAuthForm,
     error: '',
@@ -22,9 +26,12 @@ class Auth extends Component {
     this.setState({ activeForm: form });
   };
 
-  handleSubmit = () => {
-    const isSignupForm = this.state.activeForm === SIGN_UP;
-    if (isSignupForm) {
+  handleForgotPassword = () => {
+    console.log('handleForgotPassword - not yet implemented');
+  };
+
+  handleSubmit = (email: string, password: string) => {
+    if (this.state.activeForm === SIGN_UP) {
       return this.handleSignup();
     }
     this.handleSignin();
@@ -38,22 +45,18 @@ class Auth extends Component {
     console.log('handleSignUp', this.state);
   };
 
-  handleForgotPassword = () => {
-    console.log('handleForgotPassword - not yet implemented');
-  };
-
   render() {
-    const isSignupForm = this.state.activeForm === SIGN_UP;
+    const { activeForm } = this.state;
+    const isSignupForm = activeForm === SIGN_UP;
     return (
       <View>
         <AuthButtons
           handlePress={this.handleFormSelection}
-          activeForm={this.state.activeForm}
-        />
-        <Form isSignupForm={isSignupForm} />
-        <SubmitButton
           isSignupForm={isSignupForm}
-          onPress={this.handleSubmit}
+        />
+        <Form
+          isSignupForm={isSignupForm}
+          handleSubmit={this.handleSubmit}
         />
         <ErrorMessage error={this.state.error} />
         <ForgotPasswordButton
@@ -63,6 +66,5 @@ class Auth extends Component {
     );
   }
 }
-
 
 export default Auth;
