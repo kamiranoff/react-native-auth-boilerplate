@@ -7,9 +7,11 @@ export interface IErrorMessage {
 }
 
 const styles = StyleSheet.create({
-  text:
-    { color: colors.beach1 },
-});
+    text: {
+      color: colors.error1,
+      fontSize: 12,
+    },
+  });
 
 const ErrorMessage = ({ error }: IErrorMessage) => (
   <Text style={styles.text}>{error}</Text>

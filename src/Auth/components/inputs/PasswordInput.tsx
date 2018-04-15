@@ -1,18 +1,15 @@
 import React, { StatelessComponent } from 'react';
-import BaseTextInput from './BaseTextInput';
+import BaseTextInput, { IBaseTextInput } from './BaseTextInput';
 
-export interface IPasswordInput {
-  password: string;
-  onPasswordChange: (password: string) => void;
+export interface IPasswordInput extends IBaseTextInput {
   isSignupForm?: boolean;
 }
 
-const PasswordInput: StatelessComponent<IPasswordInput> = ({ onPasswordChange, password, isSignupForm }) => (
+const PasswordInput: StatelessComponent<IPasswordInput> = ({isSignupForm, ...props }) => (
   <BaseTextInput
-    onChangeText={onPasswordChange}
-    value={password}
     withBorderBottom={isSignupForm}
     placeholder="Password"
+    {...props}
   />
 );
 

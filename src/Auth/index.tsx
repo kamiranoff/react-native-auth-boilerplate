@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Button } from 'react-native';
+import { View } from 'react-native';
 
-import colors from '../constants/colors';
 import AuthButtons from './components/buttons/AuthButtons';
 import Form from './Form';
 import SubmitButton from './components/buttons/SubmitButton';
@@ -15,9 +14,6 @@ export const SIGN_UP = 'signup';
 
 class Auth extends Component {
   state = {
-    email: '',
-    password: '',
-    confirmPassword: '',
     activeForm: 'signin' as TAuthForm,
     error: '',
   };
@@ -26,16 +22,24 @@ class Auth extends Component {
     this.setState({ activeForm: form });
   };
 
-  handleSignIn = () => {
+  handleSubmit = () => {
+    const isSignupForm = this.state.activeForm === SIGN_UP;
+    if (isSignupForm) {
+      return this.handleSignup();
+    }
+    this.handleSignin();
+  };
+
+  handleSignin = () => {
     console.log('handleSignIn', this.state);
   };
 
-  handleSignUp = () => {
+  handleSignup = () => {
     console.log('handleSignUp', this.state);
   };
 
   handleForgotPassword = () => {
-    console.log('not yet implemented');
+    console.log('handleForgotPassword - not yet implemented');
   };
 
   render() {
@@ -49,6 +53,7 @@ class Auth extends Component {
         <Form isSignupForm={isSignupForm} />
         <SubmitButton
           isSignupForm={isSignupForm}
+          onPress={this.handleSubmit}
         />
         <ErrorMessage error={this.state.error} />
         <ForgotPasswordButton
@@ -58,5 +63,6 @@ class Auth extends Component {
     );
   }
 }
+
 
 export default Auth;

@@ -1,11 +1,13 @@
 import React from 'react';
-import BaseTextInput from './BaseTextInput';
+import BaseTextInput, { IBaseTextInput } from './BaseTextInput';
 
-const ConfirmPasswordInput = ({ confirmPassword, onConfirmPasswordChange }) => (
+export interface IConfirmPasswordInput extends IBaseTextInput {
+}
+
+const ConfirmPasswordInput = (props: IConfirmPasswordInput) => (
   <BaseTextInput
-    value={confirmPassword}
     placeholder="Confirm password"
-    onChangeText={onConfirmPasswordChange}
+    {...props}
   />
 );
 
