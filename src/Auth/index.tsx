@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import AuthButtons from './components/buttons/AuthButtons';
 import Form from './Form';
 import ForgotPasswordButton from './components/buttons/ForgotPasswordButton';
 import ErrorMessage from './components/texts/ErrorMessage';
+import { signin, signup } from './redux';
 
 export type TAuthForm = 'signin' | 'signup';
 
@@ -16,7 +18,12 @@ export interface IAuthState {
   error: string;
 }
 
-class Auth extends Component<{}, IAuthState> {
+export interface IAuthStateProps {
+  signin: (credentials: { email: string, password: string }) => void;
+  signup: (credentials: { email: string, password: string }) => void;
+}
+
+class Auth extends Component<IAuthStateProps, IAuthState> {
   state = {
     activeForm: 'signin' as TAuthForm,
     error: '',
@@ -32,17 +39,17 @@ class Auth extends Component<{}, IAuthState> {
 
   handleSubmit = (email: string, password: string) => {
     if (this.state.activeForm === SIGN_UP) {
-      return this.handleSignup();
+      return this.handleSignup(email, password);
     }
-    this.handleSignin();
+    this.handleSignin(email, password);
   };
 
-  handleSignin = () => {
-    console.log('handleSignIn', this.state);
+  handleSignin = (email, password) => {
+    this.props.signin({ email, password });
   };
 
-  handleSignup = () => {
-    console.log('handleSignUp', this.state);
+  handleSignup = (email, password) => {
+    this.props.signup({ email, password });
   };
 
   render() {
@@ -67,4 +74,4 @@ class Auth extends Component<{}, IAuthState> {
   }
 }
 
-export default Auth;
+export default connect(null, { signin, signup })(Auth);

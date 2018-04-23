@@ -15,6 +15,8 @@ const styles = StyleSheet.create({
   },
 });
 
+// GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest;
+
 const store = configureStore({});
 export default class App extends Component {
   render() {
