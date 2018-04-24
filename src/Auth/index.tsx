@@ -6,11 +6,12 @@ import AuthButtons from './components/buttons/AuthButtons';
 import Form from './Form';
 import ForgotPasswordButton from './components/buttons/ForgotPasswordButton';
 import ErrorMessage from './components/texts/ErrorMessage';
-import { signin, signup } from './redux';
+import { signup } from './redux/signup';
+import { signin } from './redux/signin';
 
 export type TAuthForm = 'signin' | 'signup';
 
-export const SIGN_IN = 'signup';
+export const SIGN_IN = 'signin';
 export const SIGN_UP = 'signup';
 
 export interface IAuthState {
@@ -30,6 +31,7 @@ class Auth extends Component<IAuthStateProps, IAuthState> {
   };
 
   handleFormSelection = (form: TAuthForm) => {
+    console.log(form);
     this.setState({ activeForm: form });
   };
 

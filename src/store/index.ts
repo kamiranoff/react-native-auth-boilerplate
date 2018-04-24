@@ -1,23 +1,21 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
-
-import { authReducer } from '../Auth/redux';
-
-// Root Reducer
-const rootReducer = combineReducers({
-  auth: authReducer,
-});
+import rootReducer from './reducer';
 
 const logger = createLogger({
   collapsed: true,
   diff: true,
 });
 
-const configureStore = (initialState: Object) => {
-  const middleware = applyMiddleware(thunk, logger);
+const middleware = [thunk, logger];
+const composeEnhancers = (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const enhancer = composeEnhancers(
+  applyMiddleware(...middleware),
+);
 
-  return createStore(rootReducer, initialState, middleware);
+const configureStore = (initialState) => {
+  return createStore(rootReducer, initialState, enhancer);
 };
 
 export default configureStore;
